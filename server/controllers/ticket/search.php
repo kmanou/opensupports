@@ -1,7 +1,7 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
 use RedBeanPHP\Facade as RedBean;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 
 /**
@@ -56,47 +56,47 @@ class SearchController extends Controller {
             'permission' => 'staff_1',
             'requestData' => [
                 'page' => [
-                    'validation' => DataValidator::oneOf(DataValidator::numeric()->positive(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::numericVal()->positive(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_PAGE
                 ],
                 'tags' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validTagsId(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validTagsId(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_TAG_FILTER
                 ],
                 'closed' => [
-                    'validation' => DataValidator::oneOf(DataValidator::in(['0','1']),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::in(['0','1']),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_CLOSED_FILTER
                 ],
                 'unreadStaff' => [
-                    'validation' => DataValidator::oneOf(DataValidator::in(['0','1']),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::in(['0','1']),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_UNREAD_STAFF_FILTER
                 ],
                 'dateRange' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validDateRange(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validDateRange(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DATE_RANGE_FILTER
                 ],
                 'departments' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validDepartmentsId(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validDepartmentsId(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DEPARTMENT_FILTER
                 ],
                 'authors' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validAuthorsId(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validAuthorsId(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_AUTHOR_FILTER
                 ],
                 'owners' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validOwnersId(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validOwnersId(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_OWNER_FILTER
                 ],
                 'assigned' => [
-                    'validation' => DataValidator::oneOf(DataValidator::in(['0','1']),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::in(['0','1']),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_ASSIGNED_FILTER
                 ],
                 'query' => [
-                    'validation' => DataValidator::oneOf(DataValidator::notBlank(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::notBlank(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_QUERY_FILTER
                 ],
                 'orderBy' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validOrderBy(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validOrderBy(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_ORDER_BY
                 ],
             ]
@@ -104,10 +104,12 @@ class SearchController extends Controller {
     }
 
     public function handler() {
-        $this->ignoreDeparmentFilter = (bool)Controller::request('supervisor');
+        $loggedUser = Controller::getLoggedUser();
+        // Only staff with level >= 2 (managers/supervisors) are allowed to bypass the department filter.
+        $this->ignoreDeparmentFilter = (bool)Controller::request('supervisor') && $loggedUser->level >= 2;
 
         $allowedDepartmentsId = [];
-        foreach (Controller::getLoggedUser()->sharedDepartmentList->toArray() as $department) {
+        foreach ($loggedUser->sharedDepartmentList->toArray() as $department) {
             array_push($allowedDepartmentsId,$department['id']);
         }
 
@@ -124,7 +126,7 @@ class SearchController extends Controller {
             'orderBy' => json_decode(Controller::request('orderBy'),true),
             'page' => Controller::request('page'),
             'allowedDepartments' => $allowedDepartmentsId,
-            'staffId' => Controller::getLoggedUser()->id
+            'staffId' => $loggedUser->id
         ];
         $query = $this->getSQLQuery($inputs);
         $queryWithOrder = $this->getSQLQueryWithOrder($inputs, $query);
@@ -188,7 +190,7 @@ class SearchController extends Controller {
                 $key == 0 ? $filters .= " ( " : null;
                 ($key != 0 && $key != sizeof($tagList)) ? $filters .= " or " : null;
 
-                $filters .= "tag_ticket.tag_id  = " . $tag ;
+                $filters .= "tag_ticket.tag_id  = " . (int)$tag ;
             }
             $filters .= ")";
         }
@@ -196,13 +198,13 @@ class SearchController extends Controller {
     public function setClosedFilter($closed, &$filters){
        if ($closed !== null) {
             if ($filters != "")  $filters .= " and ";
-            $filters .= "ticket.closed = " . $closed ;
+            $filters .= "ticket.closed = " . (int)$closed ;
         }
     }
     private function setSeenFilter($unreadStaff, &$filters){
        if ($unreadStaff !== null) {
             if ($filters != "")  $filters .= " and ";
-            $filters .= "ticket.unread_staff = " . $unreadStaff;
+            $filters .= "ticket.unread_staff = " . (int)$unreadStaff;
         }
     }
 
@@ -211,7 +213,7 @@ class SearchController extends Controller {
             if ($filters != "")  $filters .= " and ";
 
             foreach($dateRange as $key => $date) {
-                $key == 0 ? ($filters .= "(ticket.date >= " . $date ): ($filters .= " and ticket.date <= " . $date . ")");
+                $key == 0 ? ($filters .= "(ticket.date >= " . (int)$date ): ($filters .= " and ticket.date <= " . (int)$date . ")");
             }
         }
     }
@@ -232,11 +234,11 @@ class SearchController extends Controller {
                 } else {
                     $filters .= " or ";
                 }
-                $filters .= "ticket.department_id = " . $department;
-            } 
+                $filters .= "ticket.department_id = " . (int)$department;
+            }
             $filters .= ")";
-        } 
-        
+        }
+
         if($requestedOwnedDepartments){
             foreach($requestedOwnedDepartments as $department) {
                 if($first){
@@ -245,13 +247,13 @@ class SearchController extends Controller {
                 } else {
                     $filters .= " or ";
                 }
-                $filters .= "ticket.department_id = " . $department;
+                $filters .= "ticket.department_id = " . (int)$department;
             }
         }
-        
+
         if($requestedNotOwnedDepartments){
             if($requestedOwnedDepartments) $filters .= " or ";
-            $filters .= "(ticket.author_staff_id = " . $idStaff . " and ";
+            $filters .= "(ticket.author_staff_id = " . (int)$idStaff . " and ";
             $first = TRUE;
             foreach($requestedNotOwnedDepartments as $department) {
                 if($first){
@@ -260,7 +262,7 @@ class SearchController extends Controller {
                 } else {
                     $filters .= " or ";
                 }
-                $filters .= "ticket.department_id = " . $department;
+                $filters .= "ticket.department_id = " . (int)$department;
             }
             $filters .= "))";
         }
@@ -282,9 +284,9 @@ class SearchController extends Controller {
                 }
 
                 if($author['isStaff']){
-                    $filters .= "ticket.author_staff_id  = " . $author['id'];
+                    $filters .= "ticket.author_staff_id  = " . (int)$author['id'];
                 } else {
-                    $filters .= "ticket.author_id = " . $author['id'];
+                    $filters .= "ticket.author_id = " . (int)$author['id'];
                 }
             }
             $filters .= ")";
@@ -304,7 +306,7 @@ class SearchController extends Controller {
                 } else {
                     $filters .= " or ";
                 }
-                $filters .= "ticket.owner_id = " . $owner;
+                $filters .= "ticket.owner_id = " . (int)$owner;
             }
 
             $filters .= ")";

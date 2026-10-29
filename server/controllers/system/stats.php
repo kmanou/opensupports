@@ -45,19 +45,19 @@ class GetStatsController extends Controller {
             'permission' => 'staff_1',
             'requestData' => [
                 'dateRange' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validDateRange(), DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validDateRange(), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DATE_RANGE_FILTER
                 ],
                 'departments' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validDepartmentsId(), DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validDepartmentsId(), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DEPARTMENT_FILTER
                 ],
                 'tags' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validTagsId(), DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validTagsId(), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_TAG_FILTER
                 ],
                 'owners' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validOwnersId(), DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validOwnersId(), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_OWNER_FILTER
                 ],
             ]
@@ -93,7 +93,7 @@ class GetStatsController extends Controller {
     private function addDateRangeFilter() {
         $dateRange = json_decode(Controller::request('dateRange'));
         if ($dateRange === NULL) return " ";
-        $sql = " AND ticket.date >= {$dateRange[0]} AND ticket.date <= {$dateRange[1]} ";
+        $sql = " AND ticket.date >= " . (int)$dateRange[0] . " AND ticket.date <= " . (int)$dateRange[1] . " ";
         return $sql;
     }
 
@@ -103,7 +103,7 @@ class GetStatsController extends Controller {
         if ($departments === NULL || empty($departments)) return " ";
         $sql = " AND ";
         for ($i = 0; $i < count($departments); ++$i) {
-            $departmentId = $departments[$i];
+            $departmentId = (int)$departments[$i];
             $departments[$i] = " ticket.department_id={$departmentId} ";
         }
         $sql .= '(' . join(" OR ", $departments) . ')';
@@ -116,7 +116,7 @@ class GetStatsController extends Controller {
         if ($tags === NULL || empty($tags)) return " ";
         $sql = " AND ";
         for ($i = 0; $i < count($tags); ++$i) {
-            $tagId = $tags[$i];
+            $tagId = (int)$tags[$i];
             $tags[$i] = " tag_ticket.tag_id={$tagId} ";
         }
         $sql .= '(' . join(" OR ", $tags) . ')';
@@ -129,7 +129,7 @@ class GetStatsController extends Controller {
         if ($owners === NULL || empty($owners)) return " ";
         $sql = " AND ";
         for ($i = 0; $i < count($owners); ++$i) {
-            $ownerId = $owners[$i];
+            $ownerId = (int)$owners[$i];
             $owners[$i] = " ticket.owner_id={$ownerId} ";
         }
         $sql .= '(' . join(" OR ", $owners) . ')';
