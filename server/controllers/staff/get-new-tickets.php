@@ -36,7 +36,7 @@ class GetNewTicketsStaffController extends Controller {
             'permission' => 'staff_1',
             'requestData' => [
                 'page' => [
-                    'validation' => DataValidator::numeric(),
+                    'validation' => DataValidator::numericVal(),
                     'error' => ERRORS::INVALID_PAGE
                 ]
             ]
@@ -57,9 +57,11 @@ class GetNewTicketsStaffController extends Controller {
 
         $user = Controller::getLoggedUser();
 
+        $bindings = [];
         $query = ' (';
         foreach ($user->sharedDepartmentList as $department) {
-            $query .= 'department_id=' . $department->id . ' OR ';
+            $query .= 'department_id=? OR ';
+            $bindings[] = $department->id;
         }
 
         $ownerExists = RedBean::exec('SHOW COLUMNS FROM ticket LIKE \'owner_id\'');
@@ -71,15 +73,16 @@ class GetNewTicketsStaffController extends Controller {
         }
 
         if($departmentId) {
-            $query .= ' AND department_id=' . $departmentId;
+            $query .= ' AND department_id=?';
+            $bindings[] = $departmentId;
         }
 
-        $countTotal = Ticket::count($query);
+        $countTotal = Ticket::count($query, $bindings);
 
         $query .= ' ORDER BY unread_staff DESC';
-        $query .= ' LIMIT 10 OFFSET ' . ($page-1)*10;
+        $query .= ' LIMIT 10 OFFSET ' . (($page-1)*10);
 
-        $ticketList = Ticket::find($query);
+        $ticketList = Ticket::find($query, $bindings);
 
         Response::respondSuccess([
             'tickets' => $ticketList->toArray(true),

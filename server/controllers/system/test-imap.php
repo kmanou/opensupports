@@ -10,7 +10,7 @@
  *
  * @apiDescription Test if the given values connect correctly to a IMAP server.
  *
- * @apiPermission any
+ * @apiPermission staff3
  *
  * @apiParam {String} imap-host Host of the IMAP server.
  * @apiParam {String} imap-user User for the IMAP server.
@@ -28,7 +28,7 @@ class TestIMAPController extends Controller {
 
     public function validations() {
         return [
-            'permission' => 'any',
+            'permission' => 'staff_3',
             'requestData' => []
         ];
     }

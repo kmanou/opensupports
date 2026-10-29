@@ -11,7 +11,7 @@ use Respect\Validation\Validator as DataValidator;
  *
  * @apiDescription Test if the given values connect correctly to a SMTP server.
  *
- * @apiPermission any
+ * @apiPermission staff3
  *
  * @apiParam {String} smtp-host Host of the SMTP server.
  * @apiParam {String} smtp-port Port of the SMTP server.
@@ -30,7 +30,7 @@ class TestSMTPController extends Controller {
 
     public function validations() {
         return [
-            'permission' => 'any',
+            'permission' => 'staff_3',
             'requestData' => []
         ];
     }

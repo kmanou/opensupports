@@ -47,7 +47,19 @@ class DownloadController extends Controller {
 
         $session = Session::getInstance();
 
-        if(!$session->isStaffLogged()) {
+        if($session->isStaffLogged()) {
+            switch($fileDownloader->getFilePermission()) {
+                case FileManager::PERMISSION_TICKET:
+                    $ticketNumber = $fileDownloader->getTicketNumber();
+                    $ticket = Ticket::getByTicketNumber($ticketNumber);
+                    if(!Controller::getLoggedUser()->canManageTicket($ticket)) {
+                        return Response::respond403();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        } else {
             switch($fileDownloader->getFilePermission()) {
                 case FileManager::PERMISSION_TICKET:
                     $ticketNumber = $fileDownloader->getTicketNumber();
@@ -79,16 +91,6 @@ class DownloadController extends Controller {
             return $session->getTicketNumber() !== $ticket->ticketNumber;
         } else {
             return $ticket->author->id !== $loggedUser->id || ($loggedUser instanceof Staff) !== $ticket->authorToArray()['staff'];
-        }
-    }
-
-    private function isNotDepartmentOwner($ticket, $loggedUser) {
-        $session = Session::getInstance();
-
-        if($session->getTicketNumber()) {
-            return $session->getTicketNumber() !== $ticket->ticketNumber;
-        } else {
-            return !($loggedUser->level >= 1) || !$loggedUser->sharedDepartmentList->includesId($ticket->department->id);
         }
     }
 }
