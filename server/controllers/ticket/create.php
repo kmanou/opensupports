@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /ticket/create Create ticket
@@ -64,11 +64,11 @@ class CreateController extends Controller {
                     'error' => ERRORS::INVALID_CONTENT
                 ],
                 'departmentId' => [
-                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('department'), DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::dataStoreId('department'), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DEPARTMENT
                 ],
                 'language' => [
-                    'validation' => DataValidator::oneOf(DataValidator::in(Language::getSupportedLanguages()), DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::in(Language::getSupportedLanguages()), DataValidator::nullType()),
                     'error' => ERRORS::INVALID_LANGUAGE
                 ]
             ]

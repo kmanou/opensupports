@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /ticket/add-custom-response Add custom responses

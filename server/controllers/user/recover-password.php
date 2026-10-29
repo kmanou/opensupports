@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /user/recover-password Recover password
@@ -40,7 +40,7 @@ class RecoverPasswordController extends Controller {
             'permission' => 'any',
             'requestData' => [
                 'email' => [
-                    'validation' => DataValidator::oneOf(
+                    'validation' => DataValidator::anyOf(
                         DataValidator::email()->userEmail(),
                         DataValidator::email()->staffEmail()
                     ),

@@ -6,7 +6,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class ValidOptions extends AbstractRule {
 
-    public function validate($options) {
+    public function validate($options): bool {
         if(is_array(json_decode($options))) {
             $arrayOptions = json_decode($options);
 

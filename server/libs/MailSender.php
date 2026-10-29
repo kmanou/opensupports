@@ -1,4 +1,6 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+
 class MailSender {
     use SingletonTrait;
 
@@ -42,7 +44,7 @@ class MailSender {
             throw new Exception('Mail sending data not available');
         }
 
-        $mailerInstance->ClearAllRecipients();
+        $mailerInstance->clearAllRecipients();
         $mailerInstance->addAddress($this->mailOptions['to']);
         $mailerInstance->Subject = $this->mailOptions['subject'];
         $mailerInstance->Body = $this->mailOptions['body'];

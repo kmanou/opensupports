@@ -1,7 +1,7 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
 
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 /**
  * @api {post} /system/add-department Add department
  * @apiVersion 4.11.0

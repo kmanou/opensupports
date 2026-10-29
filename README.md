@@ -2,6 +2,13 @@
 
 [![Build Status](https://travis-ci.org/opensupports/opensupports.svg?branch=master)](https://travis-ci.org/opensupports/opensupports) v4.11.0
 
+> **This is a modified version of [OpenSupports](https://github.com/opensupports/opensupports) v4.11.0.**
+> Modified by Konstantinos Manousis ([MakeTech](https://www.maketech.eu)) on 2026-10-29: security fixes, PHP 8.3
+> compatibility, and a full dependency upgrade (Slim 2 → 4, PHPMailer 5 → 6, respect/validation 1 → 2,
+> php-imap 3 → 6, among others). See [`CHANGES.md`](CHANGES.md) for the full list of fixes and
+> [`LIBRARY_UPGRADE.md`](LIBRARY_UPGRADE.md) / [`SLIM_UPGRADE.md`](SLIM_UPGRADE.md) for the dependency upgrade
+> details. Distributed under the same [GPL-3.0 license](LICENSE) as the original project, as required.
+
 OpenSupports is an open source ticket system built primarily with PHP and ReactJS.
 Please, visit our website for more information: [http://www.opensupports.com/](http://www.opensupports.com/)
 

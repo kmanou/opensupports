@@ -1,7 +1,7 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
 use RedBeanPHP\Facade as RedBean;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /ticket/search-authors search authors of tickets
@@ -36,15 +36,15 @@ class SearchAuthorsController extends Controller {
             'permission' => 'staff_1',
             'requestData' => [
                 'query' => [
-                    'validation' => DataValidator::oneOf(DataValidator::stringType(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::stringType(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_QUERY
                 ],
                 'blackList' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validAuthorsBlackList(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validAuthorsBlackList(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_BLACK_LIST
                 ],
                 'searchUsers' => [
-                    'validation' => DataValidator::oneOf(DataValidator::in(['0','1']),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::in(['0','1']),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_USER_SEARCH_OPTION
                 ]
             ]

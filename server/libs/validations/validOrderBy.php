@@ -5,7 +5,7 @@ namespace CustomValidations;
 use Respect\Validation\Rules\AbstractRule;
 
 class ValidOrderBy extends AbstractRule {
-    public function validate($orderBy) {
+    public function validate($orderBy): bool {
         if(is_object(json_decode($orderBy))){
         	$values =["closed","owner_id","unread_staff","date"];
 
@@ -15,5 +15,7 @@ class ValidOrderBy extends AbstractRule {
 
             return true;
         }
+
+        return false;
     }
 }

@@ -23,7 +23,7 @@ use RedBeanPHP\Facade as RedBean;
  *
  */
 
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 class DeleteUserController extends Controller {
     const PATH = '/delete';

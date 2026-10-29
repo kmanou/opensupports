@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /ticket/edit-custom-response Edit custom response
@@ -43,7 +43,7 @@ class EditCustomResponseController extends Controller {
                     'error' => ERRORS::INVALID_CONTENT
                 ],
                 'name' => [
-                    'validation' => DataValidator::oneOf(
+                    'validation' => DataValidator::anyOf(
                         DataValidator::notBlank()->length(LengthConfig::MIN_LENGTH_NAME, LengthConfig::MAX_LENGTH_NAME),
                         DataValidator::nullType()
                     ),

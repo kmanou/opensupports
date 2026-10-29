@@ -6,7 +6,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class ValidTagsId extends AbstractRule {
 
-    public function validate($tags) {
+    public function validate($tags): bool {
     	$listTags = json_decode($tags);
     	if(is_array($listTags)){
 			foreach ($listTags as $TagId) {

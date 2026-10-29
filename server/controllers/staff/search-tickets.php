@@ -39,7 +39,7 @@ class SearchTicketStaffController extends Controller {
                     'error' => ERRORS::INVALID_QUERY
                 ],
                 'page' => [
-                    'validation' => DataValidator::numeric(),
+                    'validation' => DataValidator::numericVal(),
                     'error' => ERRORS::INVALID_PAGE
                 ]
             ]

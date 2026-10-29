@@ -6,7 +6,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class ValidTicketNumber extends AbstractRule {
 
-    public function validate($ticketNumber) {
+    public function validate($ticketNumber): bool {
         $ticket = \Ticket::getByTicketNumber($ticketNumber);
 
         return !$ticket->isNull();

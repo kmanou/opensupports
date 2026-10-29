@@ -6,7 +6,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class ValidOwnersId extends AbstractRule {
 
-    public function validate($owners) {
+    public function validate($owners): bool {
         if(is_array(json_decode($owners))){
             foreach (json_decode($owners) as $owner) {  
                 $author = \Staff::getDataStore($owner);

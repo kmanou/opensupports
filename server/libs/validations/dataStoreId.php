@@ -15,7 +15,7 @@ class DataStoreId extends AbstractRule {
         }
     }
 
-    public function validate($dataStoreId) {
+    public function validate($dataStoreId): bool {
         $dataStore = null;
 
         switch ($this->dataStoreName) {

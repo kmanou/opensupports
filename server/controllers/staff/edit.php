@@ -41,18 +41,18 @@ class EditStaffController extends Controller {
             'permission' => 'staff_1',
             'requestData' => [
                 'email' => [
-                    'validation' => DataValidator::oneOf(DataValidator::email(), DataValidator::falseVal()),
+                    'validation' => DataValidator::anyOf(DataValidator::email(), DataValidator::falseVal()),
                     'error' => ERRORS::INVALID_EMAIL
                 ],
                 'password' => [
-                    'validation' => DataValidator::oneOf(
+                    'validation' => DataValidator::anyOf(
                         DataValidator::notBlank()->length(LengthConfig::MIN_LENGTH_PASSWORD, LengthConfig::MAX_LENGTH_PASSWORD),
                         DataValidator::falseVal()
                     ),
                     'error' => ERRORS::INVALID_PASSWORD
                 ],
                 'level' => [
-                    'validation' => DataValidator::oneOf(DataValidator::between(1, 3, true), DataValidator::falseVal()),
+                    'validation' => DataValidator::anyOf(DataValidator::between(1, 3, true), DataValidator::falseVal()),
                     'error' => ERRORS::INVALID_LEVEL
                 ]
             ]

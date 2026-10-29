@@ -36,11 +36,11 @@ class GetSupervisedTicketController extends Controller {
             'permission' => 'user',
             'requestData' => [
                 'supervisedUsers' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validUsersId(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validUsersId(),DataValidator::nullType()),
                     'error' => ERRORS:: INVALID_SUPERVISED_USERS
                 ],
                 'page' => [
-                    'validation' => DataValidator::oneOf(DataValidator::numeric()->positive(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::numericVal()->positive(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_PAGE
                 ]
             ]

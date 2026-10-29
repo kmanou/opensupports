@@ -17,7 +17,7 @@ class Captcha extends AbstractRule {
         }
     }
     
-    public function validate($reCaptchaResponse) {
+    public function validate($reCaptchaResponse): bool {
         $reCaptchaPrivateKey = \Setting::getSetting('recaptcha-private')->getValue();
         $apiKey = \APIKey::getDataStore(\Controller::request('apiKey'), 'token');
 

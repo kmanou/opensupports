@@ -1,7 +1,7 @@
 <?php
 use RedBeanPHP\Facade as RedBean;
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /system/init-settings Init settings

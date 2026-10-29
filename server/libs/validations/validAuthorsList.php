@@ -6,7 +6,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class ValidAuthorsList extends AbstractRule {
 
-    public function validate($authors) {
+    public function validate($authors): bool {
     	if(is_array(json_decode($authors))){
 			foreach (json_decode($authors) as $author) {
                 if(!$author->id) return false;

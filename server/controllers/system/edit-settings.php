@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /system/edit-settings Edit settings
@@ -33,7 +33,7 @@ class EditSettingsController extends Controller {
             'permission' => 'staff_3',
             'requestData' => [
                 'default-department-id' => [
-                    'validation' => DataValidator::oneOf(DataValidator::dataStoreId('department'),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::dataStoreId('department'),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DEFAULT_DEPARTMENT
                 ],
             ]

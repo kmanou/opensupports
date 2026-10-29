@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /system/add-custom-field Add a custom field
@@ -46,14 +46,14 @@ class AddCustomFieldController extends Controller {
                     'error' => ERRORS::INVALID_DESCRIPTION
                 ],
                 'type' => [
-                    'validation' => DataValidator::oneOf(
+                    'validation' => DataValidator::anyOf(
                         DataValidator::equals('text'),
                         DataValidator::equals('select')
                     ),
                     'error' => ERRORS::INVALID_CUSTOM_FIELD_TYPE
                 ],
                 'options' => [
-                    'validation' => DataValidator::oneOf(
+                    'validation' => DataValidator::anyOf(
                         DataValidator::ValidOptions(),
                         DataValidator::nullType()
                     ),

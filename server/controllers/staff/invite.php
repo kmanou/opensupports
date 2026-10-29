@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /staff/invite Invite staff
@@ -60,7 +60,7 @@ class InviteStaffController extends Controller {
                     'error' => ERRORS::INVALID_LEVEL
                 ],
                 'departments' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validDepartmentsId(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validDepartmentsId(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_DEPARTMENT
                 ]
             ]

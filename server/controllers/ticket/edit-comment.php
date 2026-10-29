@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /ticket/edit-comment Edit a comment
@@ -41,7 +41,7 @@ class EditCommentController extends Controller {
                     'error' => ERRORS::INVALID_CONTENT
                 ],
                 'ticketNumber' => [
-                    'validation' => DataValidator::oneOf(DataValidator::validTicketNumber(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::validTicketNumber(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_TICKET
                 ]
             ]

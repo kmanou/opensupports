@@ -1,7 +1,7 @@
 <?php
 use RedBeanPHP\Facade as RedBean;
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /user/login Login
@@ -50,7 +50,7 @@ class LoginController extends Controller {
 
         $validations['requestData']['captcha'] = [
 
-            'validation' => DataValidator::oneOf(DataValidator::captcha(),DataValidator::nullType()),
+            'validation' => DataValidator::anyOf(DataValidator::captcha(),DataValidator::nullType()),
             'error' => ERRORS::INVALID_CAPTCHA
         ];
 

@@ -1,6 +1,6 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /article/edit Edit article
@@ -44,14 +44,14 @@ class EditArticleController extends Controller {
                     'error' => ERRORS::INVALID_TOPIC
                 ],
                 'title' => [
-                    'validation' => DataValidator::oneOf(
+                    'validation' => DataValidator::anyOf(
                         DataValidator::notBlank()->length(LengthConfig::MIN_LENGTH_TITLE, LengthConfig::MAX_LENGTH_TITLE),
                         DataValidator::nullType()
                     ),
                     'error' => ERRORS::INVALID_TITLE
                 ],
                 'content' => [
-                    'validation' => DataValidator::oneOf(DataValidator::content(),DataValidator::nullType()),
+                    'validation' => DataValidator::anyOf(DataValidator::content(),DataValidator::nullType()),
                     'error' => ERRORS::INVALID_CONTENT
                 ]
             ]

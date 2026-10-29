@@ -1,7 +1,7 @@
 <?php
 use Respect\Validation\Validator as DataValidator;
 use RedBeanPHP\Facade as RedBean;
-DataValidator::with('CustomValidations', true);
+Respect\Validation\Factory::setDefaultInstance(Respect\Validation\Factory::getDefaultInstance()->withRuleNamespace('CustomValidations'));
 
 /**
  * @api {post} /ticket/get-authors Get authors of tickets

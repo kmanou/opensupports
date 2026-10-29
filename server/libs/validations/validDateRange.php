@@ -6,7 +6,7 @@ use Respect\Validation\Rules\AbstractRule;
 
 class ValidDateRange extends AbstractRule {
 
-    public function validate($dateRange) {
+    public function validate($dateRange): bool {
         $dateArray = json_decode($dateRange);
         
         if(is_array($dateArray) && count($dateArray) == 2  ){

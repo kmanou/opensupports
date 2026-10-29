@@ -35,7 +35,7 @@ class GetAllTicketsStaffController extends Controller {
             'permission' => 'staff_1',
             'requestData' => [
                 'page' => [
-                    'validation' => DataValidator::numeric(),
+                    'validation' => DataValidator::numericVal(),
                     'error' => ERRORS::INVALID_PAGE
                 ]
             ]
