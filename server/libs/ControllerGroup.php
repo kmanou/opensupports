@@ -15,12 +15,12 @@ class ControllerGroup {
         $app = Controller::getAppInstance();
         $controllers = $this->controllers;
 
-        $app->group($this->groupPath, function () use ($app, $controllers) {
+        $app->group($this->groupPath, function (\Slim\Routing\RouteCollectorProxy $group) use ($controllers) {
             foreach ($controllers as $controller) {
                 if($controller::METHOD === 'POST') {
-                    $app->post($controller::PATH, $controller->getHandler());
+                    $group->post($controller::PATH, $controller->getHandler());
                 } else {
-                    $app->get($controller::PATH, $controller->getHandler());
+                    $group->get($controller::PATH, $controller->getHandler());
                 }
             }
         });

@@ -3,6 +3,7 @@ use RedBeanPHP\Facade as RedBean;
 
 abstract class Controller {
     private static $dataRequester;
+    private static $appInstance;
 
     /**
      * Instance-related stuff
@@ -11,7 +12,9 @@ abstract class Controller {
     abstract public function validations();
 
     public function getHandler() {
-        return function () {
+        return function ($request, $response, $args) {
+            Response::init($response);
+
             try {
                 if(RedBean::testConnection() && !Setting::isTableEmpty()) {
                     Session::getInstance()->setSessionPrefix(Setting::getSetting('session-prefix')->getValue());
@@ -20,8 +23,9 @@ abstract class Controller {
                 $this->handler();
             } catch (\Exception $exception) {
                 Response::respondError($exception->getMessage(), $exception);
-                return;
             }
+
+            return Response::getPsrResponse();
         };
     }
 
@@ -32,16 +36,18 @@ abstract class Controller {
     }
 
     public static function init() {
+        // Request data is read straight from PHP's own superglobals rather
+        // than through the PSR-7 request object: it is populated by PHP
+        // itself the same way regardless of which web framework is in
+        // front of it, so this keeps the exact behavior of Slim 2's
+        // $app->request()->get()/post() (which did the same thing) without
+        // depending on Slim's request/body-parsing internals at all.
         self::$dataRequester = function ($key) {
-            $app = self::getAppInstance();
-
-            if (Controller::getAppInstance()->request()->isGet()) {
-                $value = $app->request()->get($key);
+            if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
+                return $_GET[$key] ?? null;
             } else {
-                $value = $app->request()->post($key);
+                return $_POST[$key] ?? null;
             }
-
-            return $value;
         };
     }
 
@@ -91,8 +97,12 @@ abstract class Controller {
         return Controller::isUserLogged() && (Controller::getLoggedUser()->level >= $level);
     }
 
+    public static function setAppInstance($app) {
+        self::$appInstance = $app;
+    }
+
     public static function getAppInstance() {
-        return \Slim\Slim::getInstance();
+        return self::$appInstance;
     }
 
     public function uploadImages($forceUpload = false) {
